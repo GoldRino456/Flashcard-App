@@ -2,8 +2,8 @@
 {
     internal class Flashcard
     {
-        public int ID { get; set; }
-        public required int StackID { get; init; }
+        public int Id { get; set; }
+        public required int StackId { get; init; }
         public required string FrontOfCard { get; init; }
         public required string BackOfCard { get; init; }
     }

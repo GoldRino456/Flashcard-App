@@ -2,9 +2,9 @@
 {
     internal class StudySession
     {
-        public int ID { get; set; }
-        public required int StackID { get; init; }
-        public required DateOnly Date { get; init; }
+        public int Id { get; set; }
+        public required int StackId { get; init; }
+        public required DateTime Date { get; init; }
         public required int Score { get; init; }
     }
 }
