@@ -1,7 +1,10 @@
 ﻿using Flashcards.GoldRino456.Database;
 using Flashcards.GoldRino456.Database.Models;
+using Flashcards.GoldRino456.UI;
 
-DatabaseManager.Instance.InitializeDatabase();
+MainMenu.ProcessMainMenu();
+
+/*DatabaseManager.Instance.InitializeDatabase();
 
 var stackController = DatabaseManager.Instance.StackCtrl;
 var flashcardController = DatabaseManager.Instance.FlashcardCtrl;
@@ -41,3 +44,4 @@ studySessionController.DeleteEntry(1);
 stackController.DeleteEntry(1);
 
 Console.ReadLine();
+*/
