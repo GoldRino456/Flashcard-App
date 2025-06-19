@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Flashcards.GoldRino456.Database.Controllers;
+using Microsoft.Extensions.Configuration;
 
-namespace Flashcards.GoldRino456
+namespace Flashcards.GoldRino456.Database
 {
     internal class DatabaseManager
     {

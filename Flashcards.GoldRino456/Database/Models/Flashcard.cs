@@ -1,4 +1,4 @@
-﻿namespace Flashcards.GoldRino456
+﻿namespace Flashcards.GoldRino456.Database.Models
 {
     internal class Flashcard
     {

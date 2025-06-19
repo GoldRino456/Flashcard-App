@@ -1,7 +1,8 @@
 ﻿using Dapper;
 using Utilities.GoldRino456;
+using Flashcards.GoldRino456.Database.Models;
 
-namespace Flashcards.GoldRino456
+namespace Flashcards.GoldRino456.Database.Controllers
 {
     internal class StackController: IDatabaseTable<Stack>
     {

@@ -1,12 +1,8 @@
 ﻿using Dapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Utilities.GoldRino456;
+using Flashcards.GoldRino456.Database.Models;
 
-namespace Flashcards.GoldRino456
+namespace Flashcards.GoldRino456.Database.Controllers
 {
     internal class StudySessionController: IDatabaseTable<StudySession>
     {

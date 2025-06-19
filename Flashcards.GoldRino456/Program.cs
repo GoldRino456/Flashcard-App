@@ -1,4 +1,5 @@
-﻿using Flashcards.GoldRino456;
+﻿using Flashcards.GoldRino456.Database;
+using Flashcards.GoldRino456.Database.Models;
 
 DatabaseManager.Instance.InitializeDatabase();
 

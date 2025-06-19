@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Flashcards.GoldRino456
+namespace Flashcards.GoldRino456.Database.Controllers
 {
     internal interface IDatabaseTable<T>
     {
