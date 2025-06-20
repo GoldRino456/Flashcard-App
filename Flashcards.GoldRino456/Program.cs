@@ -2,7 +2,7 @@
 using Flashcards.GoldRino456.Database.Models;
 using Flashcards.GoldRino456.UI;
 
-MainMenu.ProcessMainMenu();
+DisplayEngine.ProcessMainMenu();
 
 /*DatabaseManager.Instance.InitializeDatabase();
 
