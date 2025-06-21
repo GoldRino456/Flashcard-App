@@ -2,7 +2,59 @@
 using Flashcards.GoldRino456.Database.Models;
 using Flashcards.GoldRino456.UI;
 
-DisplayEngine.ProcessMainMenu();
+public class StudyAid()
+{
+    private static void Main()
+    {
+        while (true)
+        {
+            ProcessMainMenu();
+        }
+    }
+
+    private static void ProcessMainMenu()
+    {
+        var menuSelection = DisplayEngine.DisplayMainMenu();
+
+        switch (menuSelection)
+        {
+            case MenuOptions.StartStudy:
+                break;
+
+            case MenuOptions.EditMaterials:
+                ProcessEditSelected();
+                break;
+
+            case MenuOptions.ViewMaterials:
+                break;
+
+            case MenuOptions.ViewStudySession:
+                break;
+
+            case MenuOptions.Quit:
+                break;
+        }
+    }
+
+    private static void ProcessEditSelected()
+    {
+        var choice = DisplayEngine.DisplayEditMenu();
+
+        switch(choice)
+        {
+            case EditOptions.CreateStack:
+                break;
+            case EditOptions.CreateFlashcard:
+                break;
+            case EditOptions.EditStack:
+                break;
+            case EditOptions.EditFlashcard:
+                break;
+            case EditOptions.Quit:
+                break;
+        }
+    }
+}
 
 /*DatabaseManager.Instance.InitializeDatabase();
 
