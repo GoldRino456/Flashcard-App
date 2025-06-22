@@ -6,6 +6,8 @@ public class StudyAid()
 {
     private static void Main()
     {
+        DatabaseManager.Instance.InitializeDatabase();
+
         while (true)
         {
             ProcessMainMenu();
@@ -43,10 +45,13 @@ public class StudyAid()
         switch(choice)
         {
             case EditOptions.CreateStack:
+                ProcessCreateStack();
                 break;
             case EditOptions.CreateFlashcard:
+                ProcessCreateFlashcard();
                 break;
             case EditOptions.EditStack:
+                ProcessEditStack();
                 break;
             case EditOptions.EditFlashcard:
                 break;
@@ -54,11 +59,49 @@ public class StudyAid()
                 break;
         }
     }
+
+    private static void ProcessCreateStack()
+    {
+        Stack newStack = new();
+        DisplayEngine.PromptUserForStackInfo(newStack);
+        DatabaseManager.Instance.StackCtrl.CreateEntry(newStack);
+    }
+
+    private static void ProcessCreateFlashcard()
+    {
+        var stackList = DatabaseManager.Instance.StackCtrl.ReadAllEntries();
+
+        if (!CheckIfAnyStackExists(stackList))
+        {
+            DisplayEngine.DisplayErrorToUser("No card stacks exist! Please create a stack before making a flashcard!");
+            return;
+        }
+
+        Flashcard newFlashcard = new();
+        DisplayEngine.PromptUserForFlashcardInfo(newFlashcard, stackList);
+        DatabaseManager.Instance.FlashcardCtrl.CreateEntry(newFlashcard);
+    }
+
+    private static void ProcessEditStack()
+    {
+        var stackList = DatabaseManager.Instance.StackCtrl.ReadAllEntries();
+
+        if(!CheckIfAnyStackExists(stackList))
+        {
+            DisplayEngine.DisplayErrorToUser("No stack exists to edit!");
+            return;
+        }
+    }
+
+    private static bool CheckIfAnyStackExists(List<Stack> stackList)
+    {
+        return stackList != null && stackList.Count > 0;
+    }
 }
 
-/*DatabaseManager.Instance.InitializeDatabase();
 
-var stackController = DatabaseManager.Instance.StackCtrl;
+
+/*var stackController = DatabaseManager.Instance.StackCtrl;
 var flashcardController = DatabaseManager.Instance.FlashcardCtrl;
 var studySessionController = DatabaseManager.Instance.StudySessionCtrl;
 

@@ -27,7 +27,7 @@ namespace Flashcards.GoldRino456.Database.Controllers
 
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@StackId", newEntry.StackId);
-            parameters.Add("@SessionDate", newEntry.Date);
+            parameters.Add("@SessionDate", newEntry.SessionDate);
             parameters.Add("@Score", newEntry.Score);
 
             DatabaseUtils.ExecuteNonQueryCommand(_connectionString, createQuery, parameters);
@@ -67,7 +67,7 @@ namespace Flashcards.GoldRino456.Database.Controllers
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@Id", id);
             parameters.Add("@StackId", updatedEntry.StackId);
-            parameters.Add("@SessionDate", updatedEntry.Date);
+            parameters.Add("@SessionDate", updatedEntry.SessionDate);
             parameters.Add("@Score", updatedEntry.Score);
 
             DatabaseUtils.ExecuteNonQueryCommand(_connectionString, updateQuery, parameters);

@@ -26,7 +26,7 @@ namespace Flashcards.GoldRino456.Database.Controllers
             string createQuery = "INSERT INTO Stacks (stackName) VALUES (@StackName);";
 
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@StackName", newEntry.Name);
+            parameters.Add("@StackName", newEntry.StackName);
 
             DatabaseUtils.ExecuteNonQueryCommand(_connectionString, createQuery, parameters);
         }
@@ -64,7 +64,7 @@ namespace Flashcards.GoldRino456.Database.Controllers
 
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@Id", id);
-            parameters.Add("@StackName", updatedEntry.Name);
+            parameters.Add("@StackName", updatedEntry.StackName);
 
             DatabaseUtils.ExecuteNonQueryCommand(_connectionString, updateQuery, parameters);
         }

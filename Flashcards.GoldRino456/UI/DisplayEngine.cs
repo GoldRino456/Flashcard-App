@@ -15,7 +15,12 @@ namespace Flashcards.GoldRino456.UI
                 { "View Study Session History", ((int)MenuOptions.ViewStudySession) }, 
                 { "Quit", ((int)MenuOptions.Quit) }};
 
-            return (MenuOptions) DisplayUtils.PromptUserForEnumSelection("What would you like to do?", menuOptions);
+            return (MenuOptions) DisplayUtils.PromptUserForIndexSelection("What would you like to do?", menuOptions);
+        }
+
+        public static void DisplayErrorToUser(string error)
+        {
+            AnsiConsole.WriteLine("[red]" + error + "[/]");
         }
 
         public static EditOptions DisplayEditMenu()
@@ -27,29 +32,38 @@ namespace Flashcards.GoldRino456.UI
                 { "Edit An Existing Flashcard", ((int)EditOptions.EditFlashcard) },
                 { "Go Back", ((int)EditOptions.Quit) }};
 
-            return (EditOptions) DisplayUtils.PromptUserForEnumSelection("Please make a selection:", editOptions);
+            return (EditOptions) DisplayUtils.PromptUserForIndexSelection("Please make a selection:", editOptions);
         }
 
         public static void PromptUserForStackInfo(Stack stack)
         {
             var stackName = DisplayUtils.PromptUserForStringInput("What do you want to call this card stack?");
 
-            stack.Name = stackName;
+            stack.StackName = stackName;
         }
 
-        public static void PromptUserForFlashcardInfo(Flashcard flashcard, List<Stack> stackList, out Stack? stack)
+        public static void PromptUserForFlashcardInfo(Flashcard flashcard, List<Stack> stackList)
         {
-            stack = null;
-
-            if(stackList.Count == 0)
+            if(stackList.Count == 0 || stackList == null)
             {
-                stack = new();
-
-                AnsiConsole.WriteLine("No existing card stack found. Creating new card stack!");
-                PromptUserForStackInfo(stack);
+                AnsiConsole.WriteLine("No existing card stack found.");
+                return;
             }
 
+            var stackChoices = new Dictionary<string, int>();
 
+            foreach (Stack stack in stackList)
+            {
+                stackChoices[stack.StackName] = stack.StackId;
+            }
+
+            var frontOfCard = DisplayUtils.PromptUserForStringInput("Please enter the text for the front side of the flashcard: ");
+            var backOfCard = DisplayUtils.PromptUserForStringInput("Please enter the text for the back side of the flashcard: ");
+            var stackIndex = DisplayUtils.PromptUserForIndexSelection("Which stack should this card be added to?", stackChoices);
+
+            flashcard.StackId = stackIndex;
+            flashcard.FrontOfCard = frontOfCard;
+            flashcard.BackOfCard = backOfCard;
         }
     }
 }
