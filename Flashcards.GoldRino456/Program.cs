@@ -5,11 +5,13 @@ using Utilities.GoldRino456;
 
 public class StudyAid()
 {
+    private static bool _isAppRunning = true;
+
     private static void Main()
     {
         DatabaseManager.Instance.InitializeDatabase();
 
-        while (true)
+        while (_isAppRunning)
         {
             DisplayEngine.ClearScreen();
             ProcessMainMenu();
@@ -30,12 +32,14 @@ public class StudyAid()
                 break;
 
             case MenuOptions.ViewMaterials:
+                ProcessViewMaterials();
                 break;
 
             case MenuOptions.ViewStudySession:
                 break;
 
             case MenuOptions.Quit:
+                _isAppRunning = false;
                 break;
         }
     }
@@ -130,6 +134,31 @@ public class StudyAid()
         DatabaseManager.Instance.FlashcardCtrl.UpdateEntry(cardList[cardListId].CardId, cardList[cardListId]);
     }
     #endregion
+
+    private static void ProcessViewMaterials()
+    {
+        //Prompt User For What Stack they want to view
+        var stackList = DatabaseManager.Instance.StackCtrl.ReadAllEntries();
+        if (!CheckIfAnyElementsExist(stackList))
+        {
+            DisplayEngine.DisplayErrorToUser("No stack exists to view!");
+            DisplayEngine.PressAnyKeyToContinue();
+            return;
+        }
+        var stackId = DisplayEngine.PromptUserForStackSelection("Which stack of cards would you like to view?", stackList);
+
+        //Check that the stack actually DOES have cards in it.
+        var cardList = DatabaseManager.Instance.FlashcardCtrl.ReadAllEntriesFromStack(stackId);
+        if (!CheckIfAnyElementsExist(cardList))
+        {
+            DisplayEngine.DisplayErrorToUser("No cards found in stack!");
+            DisplayEngine.PressAnyKeyToContinue();
+            return;
+        }
+
+        DisplayEngine.DisplayFlashcards(cardList);
+        DisplayEngine.PressAnyKeyToContinue();
+    }
 
     private static bool CheckIfAnyElementsExist<T>(List<T> list)
     {
