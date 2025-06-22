@@ -50,6 +50,16 @@ namespace Flashcards.GoldRino456.Database.Controllers
             return DatabaseUtils.ExecuteQueryCommand<Flashcard>(_connectionString, readQuery);
         }
 
+        public List<Flashcard> ReadAllEntriesFromStack(int stackId)
+        {
+            string readQuery = "SELECT * FROM Cards WHERE stackId = @StackId";
+
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("@StackId", stackId);
+
+            return DatabaseUtils.ExecuteQueryCommand<Flashcard>(_connectionString, readQuery, parameters);
+        }
+
         public Flashcard ReadEntry(int id)
         {
             string readQuery = "SELECT * FROM Cards WHERE cardId = @Id";

@@ -20,7 +20,7 @@ namespace Flashcards.GoldRino456.UI
 
         public static void DisplayErrorToUser(string error)
         {
-            AnsiConsole.WriteLine("[red]" + error + "[/]");
+            AnsiConsole.MarkupLine("[red]" + error + "[/]");
         }
 
         public static EditOptions DisplayEditMenu()
@@ -28,7 +28,7 @@ namespace Flashcards.GoldRino456.UI
             var editOptions = new Dictionary<string, int> {
                 { "Create A New Stack", ((int)EditOptions.CreateStack) },
                 { "Create A New Flashcard", ((int)EditOptions.CreateFlashcard) },
-                { "Edit An Existing Stack", ((int)EditOptions.EditStack)},
+                { "Edit An Existing Stack", ((int)EditOptions.EditStack) },
                 { "Edit An Existing Flashcard", ((int)EditOptions.EditFlashcard) },
                 { "Go Back", ((int)EditOptions.Quit) }};
 
@@ -44,12 +44,17 @@ namespace Flashcards.GoldRino456.UI
 
         public static void PromptUserForFlashcardInfo(Flashcard flashcard, List<Stack> stackList)
         {
-            if(stackList.Count == 0 || stackList == null)
-            {
-                AnsiConsole.WriteLine("No existing card stack found.");
-                return;
-            }
+            var frontOfCard = DisplayUtils.PromptUserForStringInput("Please enter the text for the front side of the flashcard: ");
+            var backOfCard = DisplayUtils.PromptUserForStringInput("Please enter the text for the back side of the flashcard: ");
+            var stackIndex = PromptUserForStackSelection("Which stack should this card be added to?", stackList);
 
+            flashcard.StackId = stackIndex;
+            flashcard.FrontOfCard = frontOfCard;
+            flashcard.BackOfCard = backOfCard;
+        }
+
+        public static int PromptUserForStackSelection(string prompt, List<Stack> stackList)
+        {
             var stackChoices = new Dictionary<string, int>();
 
             foreach (Stack stack in stackList)
@@ -57,13 +62,39 @@ namespace Flashcards.GoldRino456.UI
                 stackChoices[stack.StackName] = stack.StackId;
             }
 
-            var frontOfCard = DisplayUtils.PromptUserForStringInput("Please enter the text for the front side of the flashcard: ");
-            var backOfCard = DisplayUtils.PromptUserForStringInput("Please enter the text for the back side of the flashcard: ");
-            var stackIndex = DisplayUtils.PromptUserForIndexSelection("Which stack should this card be added to?", stackChoices);
+            return DisplayUtils.PromptUserForIndexSelection(prompt, stackChoices);
+        }
 
-            flashcard.StackId = stackIndex;
-            flashcard.FrontOfCard = frontOfCard;
-            flashcard.BackOfCard = backOfCard;
+        public static int PromptUserForFlashcardSelection(string prompt, List<Flashcard> cardList)
+        {
+            DisplayFlashcards(cardList);
+            return DisplayUtils.PromptUserForIntegerInput(prompt, 1, cardList.Count + 1) - 1;
+        }
+
+        public static void DisplayFlashcards(List<Flashcard> flashcards)
+        {
+            int index = 1;
+            var cardColumns = new String[] { "Card #", "Front of Card", "Back of Card" };
+            var cardRows = new List<string[]>();
+            foreach (var card in flashcards)
+            {
+                var row = new String[] { index.ToString(), card.FrontOfCard, card.BackOfCard };
+                cardRows.Add(row);
+                index++;
+            }
+
+            DisplayUtils.DisplayListAsTable(cardColumns, cardRows);
+        }
+    
+        public static void ClearScreen()
+        {
+            AnsiConsole.Clear();
+        }
+
+        public static void PressAnyKeyToContinue()
+        {
+            AnsiConsole.WriteLine("Press any key to continue...");
+            AnsiConsole.Console.Input.ReadKey(false);
         }
     }
 }

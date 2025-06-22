@@ -22,6 +22,20 @@ namespace Utilities.GoldRino456
             return choices[selection];
         }
 
+        public static void DisplayListAsTable(string[] columns, List<string[]> rows)
+        {
+            var table = new Table();
+
+            table.AddColumns(columns);
+
+            foreach(var row in rows)
+            {
+                table.AddRow(row);
+            }
+
+            AnsiConsole.Write(table);
+        }
+
         public static string PromptUserForStringInput(string promptText)
         {
             var input = AnsiConsole.Prompt(
@@ -36,6 +50,19 @@ namespace Utilities.GoldRino456
                     {
                         return ValidationResult.Success();
                     }
+                }));
+
+            return input;
+        }
+
+        public static int PromptUserForIntegerInput(string prompt, int min, int max)
+        {
+            var input = AnsiConsole.Prompt(
+                new TextPrompt<int>(prompt)
+                .Validate(n =>
+                {
+                    if(n >= max || n < min) { return ValidationResult.Error("Invalid input entered."); }
+                    else { return ValidationResult.Success(); }
                 }));
 
             return input;
