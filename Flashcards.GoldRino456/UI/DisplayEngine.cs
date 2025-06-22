@@ -1,4 +1,6 @@
-﻿using Utilities.GoldRino456;
+﻿using Flashcards.GoldRino456.Database.Models;
+using Spectre.Console;
+using Utilities.GoldRino456;
 
 namespace Flashcards.GoldRino456.UI
 {
@@ -13,7 +15,7 @@ namespace Flashcards.GoldRino456.UI
                 { "View Study Session History", ((int)MenuOptions.ViewStudySession) }, 
                 { "Quit", ((int)MenuOptions.Quit) }};
 
-            return (MenuOptions) DisplayUtils.PromptUserForSingleSelection("What would you like to do?", menuOptions);
+            return (MenuOptions) DisplayUtils.PromptUserForEnumSelection("What would you like to do?", menuOptions);
         }
 
         public static EditOptions DisplayEditMenu()
@@ -25,7 +27,29 @@ namespace Flashcards.GoldRino456.UI
                 { "Edit An Existing Flashcard", ((int)EditOptions.EditFlashcard) },
                 { "Go Back", ((int)EditOptions.Quit) }};
 
-            return (EditOptions) DisplayUtils.PromptUserForSingleSelection("Please make a selection:", editOptions);
+            return (EditOptions) DisplayUtils.PromptUserForEnumSelection("Please make a selection:", editOptions);
+        }
+
+        public static void PromptUserForStackInfo(Stack stack)
+        {
+            var stackName = DisplayUtils.PromptUserForStringInput("What do you want to call this card stack?");
+
+            stack.Name = stackName;
+        }
+
+        public static void PromptUserForFlashcardInfo(Flashcard flashcard, List<Stack> stackList, out Stack? stack)
+        {
+            stack = null;
+
+            if(stackList.Count == 0)
+            {
+                stack = new();
+
+                AnsiConsole.WriteLine("No existing card stack found. Creating new card stack!");
+                PromptUserForStackInfo(stack);
+            }
+
+
         }
     }
 }

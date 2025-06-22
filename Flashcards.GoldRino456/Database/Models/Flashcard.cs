@@ -3,8 +3,8 @@
     internal class Flashcard
     {
         public int Id { get; set; }
-        public required int StackId { get; init; }
-        public required string FrontOfCard { get; init; }
-        public required string BackOfCard { get; init; }
+        public int StackId { get; set; }
+        public string? FrontOfCard { get; set; }
+        public string? BackOfCard { get; set; }
     }
 }

@@ -7,19 +7,38 @@ namespace Utilities.GoldRino456
         /// <summary>
         /// Prompts the user for a selection from a dictionary of choices that correspond to an enum cast as an integer value.
         /// </summary>
-        /// <param name="menuPrompt"></param>
+        /// <param name="promptText"></param>
         /// <param name="choices"> Best to think of this as Dictionary<string, (int)enum> </param>
         /// <returns>integer value returned is assumed to be equivalent of some Enum type corresponding to the string choices.</returns>
-        public static int PromptUserForSingleSelection(string menuPrompt, Dictionary<string, int> choices)
+        public static int PromptUserForEnumSelection(string promptText, Dictionary<string, int> choices)
         {
             var selection = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                .Title(menuPrompt)
+                .Title(promptText)
                 .PageSize(10)
                 .MoreChoicesText("[grey](Move up and down to see additional options)[/]")
                 .AddChoices(choices.Keys.ToArray()));
 
             return choices[selection];
+        }
+
+        public static string PromptUserForStringInput(string promptText)
+        {
+            var input = AnsiConsole.Prompt(
+                new TextPrompt<string>(promptText)
+                .Validate(n =>
+                {
+                    if(string.IsNullOrEmpty(n))
+                    {
+                        return ValidationResult.Error();
+                    }
+                    else
+                    {
+                        return ValidationResult.Success();
+                    }
+                }));
+
+            return input;
         }
 
         public static void DisplayElementsAsTable(string[] columns, List<string[]> rows)
