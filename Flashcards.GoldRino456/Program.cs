@@ -137,10 +137,10 @@ public class StudyAid()
             DisplayEngine.PressAnyKeyToContinue();
             return;
         }
-        var stackId = DisplayEngine.PromptUserForStackSelection("Which stack of cards would you like to view?", stackList);
+        var stackListIndex = DisplayEngine.PromptUserForStackSelection("Which stack of cards would you like to view?", stackList);
 
         //Check that the stack actually DOES have cards in it.
-        var cardList = DatabaseManager.Instance.FlashcardCtrl.ReadAllEntriesFromStack(stackId);
+        var cardList = DatabaseManager.Instance.FlashcardCtrl.ReadAllEntriesFromStack(stackList[stackListIndex].StackId);
         if (!CheckIfAnyElementsExist(cardList))
         {
             DisplayEngine.DisplayErrorToUser("No cards found in stack!");
@@ -159,7 +159,7 @@ public class StudyAid()
 
         if (!CheckIfAnyElementsExist(stacksList))
         {
-            DisplayEngine.DisplayErrorToUser("No stack exists to edit!");
+            DisplayEngine.DisplayErrorToUser("No stacks exist!");
             DisplayEngine.PressAnyKeyToContinue();
 
             stack = null;
@@ -194,12 +194,38 @@ public class StudyAid()
 
     private static void ProcessDeleteStack()
     {
+        Stack? selectedStack;
+        if (HandleStackSelection("Which stack would you like to delete? (WARNING: This cannot be undone and will delete all associated Flashcards and Study Sessions.)", out selectedStack))
+        {
+            var cardsList = DatabaseManager.Instance.FlashcardCtrl.ReadAllEntriesFromStack(selectedStack.StackId);
+            if(CheckIfAnyElementsExist<Flashcard>(cardsList)) 
+            {
+                foreach(var card in cardsList)
+                {
+                    DatabaseManager.Instance.FlashcardCtrl.DeleteEntry(card.CardId);
+                }
+            }
 
+            //TODO: Add study sessions here too
+
+            DatabaseManager.Instance.StackCtrl.DeleteEntry(selectedStack.StackId);
+        }
     }
 
     private static void ProcessDeleteFlashcard()
     {
+        //Prompt User For What Stack they want to look at...
+        Stack? selectedStack;
+        if (HandleStackSelection("Which stack would you like to delete a card from?", out selectedStack))
+        {
+            //Check and Select a FlashCard
+            Flashcard? selectedCard;
 
+            if (HandleFlashcardSelection("Please select a card to delete: ", selectedStack, out selectedCard))
+            {
+                DatabaseManager.Instance.FlashcardCtrl.DeleteEntry(selectedCard.CardId);
+            }
+        }
     }
 
     private static bool CheckIfAnyElementsExist<T>(List<T> list)
