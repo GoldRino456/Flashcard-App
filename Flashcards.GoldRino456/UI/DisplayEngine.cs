@@ -90,6 +90,47 @@ namespace Flashcards.GoldRino456.UI
             DisplayUtils.DisplayListAsTable(cardColumns, cardRows);
         }
     
+        public static void DisplayOneSideOfFlashcard(Flashcard card, bool displayFrontSide)
+        {
+            Table table = new();
+
+            if(displayFrontSide)
+            {
+                table.AddColumn(card.FrontOfCard);
+            }
+            else
+            {
+                table.AddColumn(card.BackOfCard);
+            }
+
+            AnsiConsole.Write(table);
+        }
+
+        public static bool PromptForFlashcard(Flashcard flashcard, bool displayFrontSide)
+        {
+            DisplayOneSideOfFlashcard(flashcard, displayFrontSide);
+            var input = DisplayUtils.PromptUserForStringInput("Input your answer to this card: ");
+            string cardAnswer;
+
+            cardAnswer = displayFrontSide ? flashcard.BackOfCard : flashcard.FrontOfCard;
+            bool isCorrect = string.Equals(input.ToLower(), cardAnswer.ToLower());
+
+            if(isCorrect)
+            {
+                AnsiConsole.WriteLine("Correct!");
+                return true;
+            }
+            
+            AnsiConsole.WriteLine("Incorrect. The correct answer was: \"" + cardAnswer + "\"");
+            return false;
+        }
+
+        public static void DisplayFinalScore(int score, int totalPossiblePoints)
+        {
+            AnsiConsole.WriteLine("Final Score: " + score.ToString() + " out of " + totalPossiblePoints.ToString() + " possible.");
+            PressAnyKeyToContinue();
+        }
+
         public static void ClearScreen()
         {
             AnsiConsole.Clear();

@@ -25,6 +25,7 @@ public class StudyAid()
         switch (menuSelection)
         {
             case MenuOptions.StartStudy:
+                ProcessStudySession();
                 break;
 
             case MenuOptions.EditMaterials:
@@ -43,6 +44,46 @@ public class StudyAid()
                 break;
         }
     }
+
+    #region Study Session Functions
+
+    private static void ProcessStudySession()
+    {
+        Stack? selectedStack;
+        if (HandleStackSelection("Which stack would you like to study?", out selectedStack))
+        {
+            var cardsList = DatabaseManager.Instance.FlashcardCtrl.ReadAllEntriesFromStack(selectedStack.StackId);
+            if (CheckIfAnyElementsExist<Flashcard>(cardsList))
+            {
+                cardsList = cardsList.OrderBy(n => Random.Shared.Next()).ToList();
+                Queue<Flashcard> cardQueue = new Queue<Flashcard>(cardsList);
+                StartStudySession(cardQueue, selectedStack.StackId);
+            }
+        }
+    }
+
+    private static void StartStudySession(Queue<Flashcard> cardQueue, int stackId)
+    {
+        int score = 0;
+        int maxScore = cardQueue.Count;
+
+        while(cardQueue.Count > 0)
+        {
+            var currentCard = cardQueue.Dequeue();
+
+            bool isCorrect = DisplayEngine.PromptForFlashcard(currentCard, true); //Add feature to randomize front/back or one specifically
+            score += isCorrect ? 1 : 0;
+
+            DisplayEngine.PressAnyKeyToContinue();
+            DisplayEngine.ClearScreen();
+        }
+
+        StudySession session = new() { StackId = stackId, SessionDate = DateTime.Now.Date, Score = score };
+        DatabaseManager.Instance.StudySessionCtrl.CreateEntry(session);
+        DisplayEngine.DisplayFinalScore(score, maxScore);
+    }
+
+    #endregion
 
     #region Edit Menu Functions
     private static void ProcessEditSelected()
@@ -127,6 +168,51 @@ public class StudyAid()
     }
     #endregion
 
+    #region Delete Functions
+    private static void ProcessDeleteStack()
+    {
+        Stack? selectedStack;
+        if (HandleStackSelection("Which stack would you like to delete? (WARNING: This cannot be undone and will delete all associated Flashcards and Study Sessions.)", out selectedStack))
+        {
+            var cardsList = DatabaseManager.Instance.FlashcardCtrl.ReadAllEntriesFromStack(selectedStack.StackId);
+            if (CheckIfAnyElementsExist<Flashcard>(cardsList))
+            {
+                foreach (var card in cardsList)
+                {
+                    DatabaseManager.Instance.FlashcardCtrl.DeleteEntry(card.CardId);
+                }
+            }
+
+            var studySessionList = DatabaseManager.Instance.StudySessionCtrl.ReadAllEntriesFromStack(selectedStack.StackId);
+            if(CheckIfAnyElementsExist<StudySession>(studySessionList))
+            {
+                foreach (var studySession in studySessionList)
+                {
+                    DatabaseManager.Instance.StudySessionCtrl.DeleteEntry(studySession.SessionId);
+                }
+            }
+
+            DatabaseManager.Instance.StackCtrl.DeleteEntry(selectedStack.StackId);
+        }
+    }
+
+    private static void ProcessDeleteFlashcard()
+    {
+        //Prompt User For What Stack they want to look at...
+        Stack? selectedStack;
+        if (HandleStackSelection("Which stack would you like to delete a card from?", out selectedStack))
+        {
+            //Check and Select a FlashCard
+            Flashcard? selectedCard;
+
+            if (HandleFlashcardSelection("Please select a card to delete: ", selectedStack, out selectedCard))
+            {
+                DatabaseManager.Instance.FlashcardCtrl.DeleteEntry(selectedCard.CardId);
+            }
+        }
+    }
+    #endregion
+
     private static void ProcessViewMaterials()
     {
         //Prompt User For What Stack they want to view
@@ -192,86 +278,8 @@ public class StudyAid()
         return true;
     }
 
-    private static void ProcessDeleteStack()
-    {
-        Stack? selectedStack;
-        if (HandleStackSelection("Which stack would you like to delete? (WARNING: This cannot be undone and will delete all associated Flashcards and Study Sessions.)", out selectedStack))
-        {
-            var cardsList = DatabaseManager.Instance.FlashcardCtrl.ReadAllEntriesFromStack(selectedStack.StackId);
-            if(CheckIfAnyElementsExist<Flashcard>(cardsList)) 
-            {
-                foreach(var card in cardsList)
-                {
-                    DatabaseManager.Instance.FlashcardCtrl.DeleteEntry(card.CardId);
-                }
-            }
-
-            //TODO: Add study sessions here too
-
-            DatabaseManager.Instance.StackCtrl.DeleteEntry(selectedStack.StackId);
-        }
-    }
-
-    private static void ProcessDeleteFlashcard()
-    {
-        //Prompt User For What Stack they want to look at...
-        Stack? selectedStack;
-        if (HandleStackSelection("Which stack would you like to delete a card from?", out selectedStack))
-        {
-            //Check and Select a FlashCard
-            Flashcard? selectedCard;
-
-            if (HandleFlashcardSelection("Please select a card to delete: ", selectedStack, out selectedCard))
-            {
-                DatabaseManager.Instance.FlashcardCtrl.DeleteEntry(selectedCard.CardId);
-            }
-        }
-    }
-
     private static bool CheckIfAnyElementsExist<T>(List<T> list)
     {
         return list != null && list.Count > 0;
     }
 }
-
-
-
-/*var stackController = DatabaseManager.Instance.StackCtrl;
-var flashcardController = DatabaseManager.Instance.FlashcardCtrl;
-var studySessionController = DatabaseManager.Instance.StudySessionCtrl;
-
-var stack1 = new Stack() {Name = "Test" };
-var card1 = new Flashcard() { StackId = 1, FrontOfCard = "Hola!", BackOfCard = "Hello!" };
-var session1 = new StudySession() { StackId = 1, Date = DateTime.Now, Score = 12 };
-
-stackController.CreateEntry(stack1);
-flashcardController.CreateEntry(card1);
-studySessionController.CreateEntry(session1);
-
-Console.ReadLine();
-
-Console.WriteLine(stackController.ReadEntry(1));
-Console.WriteLine(flashcardController.ReadEntry(1));
-Console.WriteLine(studySessionController.ReadEntry(1));
-
-Console.ReadLine();
-
-stackController.UpdateEntry(1, new Stack() { Name = "Change" });
-flashcardController.UpdateEntry(1, new Flashcard() {StackId = 1, FrontOfCard = "Guten Tag!", BackOfCard = "Good Day!"});
-studySessionController.UpdateEntry(1, new StudySession() { StackId = 1, Date = DateTime.Now, Score = 5 });
-
-Console.ReadLine();
-
-Console.WriteLine(stackController.ReadEntry(1));
-Console.WriteLine(flashcardController.ReadEntry(1));
-Console.WriteLine(studySessionController.ReadEntry(1));
-
-Console.ReadLine();
-
-
-flashcardController.DeleteEntry(1);
-studySessionController.DeleteEntry(1);
-stackController.DeleteEntry(1);
-
-Console.ReadLine();
-*/

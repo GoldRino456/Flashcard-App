@@ -50,6 +50,16 @@ namespace Flashcards.GoldRino456.Database.Controllers
             return DatabaseUtils.ExecuteQueryCommand<StudySession>(_connectionString, readQuery);
         }
 
+        public List<StudySession> ReadAllEntriesFromStack(int stackId)
+        {
+            string readQuery = "SELECT * FROM Sessions WHERE stackId = @StackId";
+
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("@StackId", stackId);
+
+            return DatabaseUtils.ExecuteQueryCommand<StudySession>(_connectionString, readQuery, parameters);
+        }
+
         public StudySession ReadEntry(int id)
         {
             string readQuery = "SELECT * FROM Sessions WHERE sessionId = @Id";
