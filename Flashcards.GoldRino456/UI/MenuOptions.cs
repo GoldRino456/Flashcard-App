@@ -21,6 +21,8 @@ namespace Flashcards.GoldRino456.UI
         CreateFlashcard = 2,
         EditStack = 3,
         EditFlashcard = 4,
+        DeleteStack = 5,
+        DeleteFlashcard = 6,
         Quit = 0
     }
 }

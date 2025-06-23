@@ -30,6 +30,8 @@ namespace Flashcards.GoldRino456.UI
                 { "Create A New Flashcard", ((int)EditOptions.CreateFlashcard) },
                 { "Edit An Existing Stack", ((int)EditOptions.EditStack) },
                 { "Edit An Existing Flashcard", ((int)EditOptions.EditFlashcard) },
+                { "Delete a Stack", ((int)EditOptions.DeleteStack) },
+                { "Delete a Flashcard", ((int)EditOptions.DeleteFlashcard) },
                 { "Go Back", ((int)EditOptions.Quit) }};
 
             return (EditOptions) DisplayUtils.PromptUserForIndexSelection("Please make a selection:", editOptions);
@@ -48,7 +50,7 @@ namespace Flashcards.GoldRino456.UI
             var backOfCard = DisplayUtils.PromptUserForStringInput("Please enter the text for the back side of the flashcard: ");
             var stackIndex = PromptUserForStackSelection("Which stack should this card be added to?", stackList);
 
-            flashcard.StackId = stackIndex;
+            flashcard.StackId = stackList[stackIndex].StackId;
             flashcard.FrontOfCard = frontOfCard;
             flashcard.BackOfCard = backOfCard;
         }
@@ -57,9 +59,11 @@ namespace Flashcards.GoldRino456.UI
         {
             var stackChoices = new Dictionary<string, int>();
 
+            int index = 0;
             foreach (Stack stack in stackList)
             {
-                stackChoices[stack.StackName] = stack.StackId;
+                stackChoices[stack.StackName] = index;
+                index++;
             }
 
             return DisplayUtils.PromptUserForIndexSelection(prompt, stackChoices);

@@ -63,6 +63,12 @@ public class StudyAid()
             case EditOptions.EditFlashcard:
                 ProcessEditFlashcard();
                 break;
+            case EditOptions.DeleteStack:
+                ProcessDeleteStack();
+                break;
+            case EditOptions.DeleteFlashcard:
+                ProcessDeleteFlashcard();
+                break;
             case EditOptions.Quit:
                 break;
         }
@@ -92,46 +98,32 @@ public class StudyAid()
 
     private static void ProcessEditStack()
     {
-        var stackList = DatabaseManager.Instance.StackCtrl.ReadAllEntries();
-        if(!CheckIfAnyElementsExist(stackList))
+        Stack? selectedStack;
+        if (HandleStackSelection("Which stack would you like to edit?", out selectedStack))
         {
-            DisplayEngine.DisplayErrorToUser("No stack exists to edit!");
-            DisplayEngine.PressAnyKeyToContinue();
-            return;
+            Stack updatedStack = new();
+            DisplayEngine.PromptUserForStackInfo(updatedStack);
+            DatabaseManager.Instance.StackCtrl.UpdateEntry(selectedStack.StackId, updatedStack);
         }
-
-        var stackId = DisplayEngine.PromptUserForStackSelection("Which stack would you like to edit?", stackList);
-        
-        Stack updatedStack = new();
-        DisplayEngine.PromptUserForStackInfo(updatedStack);
-        DatabaseManager.Instance.StackCtrl.UpdateEntry(stackId, updatedStack);
     }
 
     private static void ProcessEditFlashcard()
     {
         //Prompt User For What Stack they want to look at...
-        var stackList = DatabaseManager.Instance.StackCtrl.ReadAllEntries();
-        if (!CheckIfAnyElementsExist(stackList))
+        Stack? selectedStack;
+        if(HandleStackSelection("Which stack would you like to edit?", out selectedStack))
         {
-            DisplayEngine.DisplayErrorToUser("No stack exists to edit!");
-            DisplayEngine.PressAnyKeyToContinue();
-            return;
-        }
-        var stackId = DisplayEngine.PromptUserForStackSelection("Which stack of cards would you like to edit?", stackList);
+            //Check and Select a FlashCard
+            Flashcard? selectedCard;
 
-        //Check that the stack actually DOES have cards in it.
-        var cardList = DatabaseManager.Instance.FlashcardCtrl.ReadAllEntriesFromStack(stackId);
-        if(!CheckIfAnyElementsExist(cardList))
-        {
-            DisplayEngine.DisplayErrorToUser("No cards found in stack!");
-            DisplayEngine.PressAnyKeyToContinue();
-            return;
+            if(HandleFlashcardSelection("Please select a card to edit: ", selectedStack, out selectedCard))
+            {
+                Flashcard updatedCard = new();
+                var stackList = DatabaseManager.Instance.StackCtrl.ReadAllEntries();
+                DisplayEngine.PromptUserForFlashcardInfo(updatedCard, stackList);
+                DatabaseManager.Instance.FlashcardCtrl.UpdateEntry(selectedCard.CardId, updatedCard);
+            }
         }
-
-        //Prompt user for which card and the changes they want to make to it.
-        var cardListId = DisplayEngine.PromptUserForFlashcardSelection("Please select a card to edit: ", cardList);
-        DisplayEngine.PromptUserForFlashcardInfo(cardList[cardListId], stackList);
-        DatabaseManager.Instance.FlashcardCtrl.UpdateEntry(cardList[cardListId].CardId, cardList[cardListId]);
     }
     #endregion
 
@@ -158,6 +150,56 @@ public class StudyAid()
 
         DisplayEngine.DisplayFlashcards(cardList);
         DisplayEngine.PressAnyKeyToContinue();
+    }
+
+    private static bool HandleStackSelection(string prompt, out Stack? stack)
+    {
+        var stacksList = DatabaseManager.Instance.StackCtrl.ReadAllEntries();
+        var chosenStack = -1;
+
+        if (!CheckIfAnyElementsExist(stacksList))
+        {
+            DisplayEngine.DisplayErrorToUser("No stack exists to edit!");
+            DisplayEngine.PressAnyKeyToContinue();
+
+            stack = null;
+            return false;
+        }
+
+        chosenStack = DisplayEngine.PromptUserForStackSelection(prompt, stacksList);
+        stack = stacksList[chosenStack];
+        return true;
+    }
+
+    private static bool HandleFlashcardSelection(string prompt, Stack stack, out Flashcard? card)
+    {
+        //Check that the stack actually DOES have cards in it.
+        var cardsList = DatabaseManager.Instance.FlashcardCtrl.ReadAllEntriesFromStack(stack.StackId);
+        var chosenCard = -1;
+
+        if (!CheckIfAnyElementsExist(cardsList))
+        {
+            DisplayEngine.DisplayErrorToUser("No cards found in stack!");
+            DisplayEngine.PressAnyKeyToContinue();
+
+            card = null;
+            return false;
+        }
+
+        //Prompt user for which card and the changes they want to make to it.
+        chosenCard = DisplayEngine.PromptUserForFlashcardSelection(prompt, cardsList);
+        card = cardsList[chosenCard];
+        return true;
+    }
+
+    private static void ProcessDeleteStack()
+    {
+
+    }
+
+    private static void ProcessDeleteFlashcard()
+    {
+
     }
 
     private static bool CheckIfAnyElementsExist<T>(List<T> list)
