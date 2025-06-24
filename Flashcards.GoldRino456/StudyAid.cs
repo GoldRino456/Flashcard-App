@@ -100,6 +100,11 @@ public class StudyAid()
         DisplayEngine.PressAnyKeyToContinue();
     }
 
+    /// <summary>
+    /// Handles running and displaying the actual study session the user interacts with. Takes a queue of cards to display as well as the id number of the current stack.
+    /// </summary>
+    /// <param name="cardQueue"></param>
+    /// <param name="stackId"></param>
     private static void StartStudySession(Queue<Flashcard> cardQueue, int stackId)
     {
         int score = 0;
@@ -281,6 +286,12 @@ public class StudyAid()
         DisplayEngine.PressAnyKeyToContinue();
     }
 
+    /// <summary>
+    /// Prompts the user to select a stack from all available.
+    /// </summary>
+    /// <param name="prompt">Customizable message displayed to the user.</param>
+    /// <param name="stack">Output stack that the user selected.</param>
+    /// <returns></returns>
     private static bool HandleStackSelection(string prompt, out Stack? stack)
     {
         var stacksList = DatabaseManager.Instance.StackCtrl.ReadAllEntries();
@@ -300,6 +311,13 @@ public class StudyAid()
         return true;
     }
 
+    /// <summary>
+    /// Prompts the user to select a flashcard from all available in a given stack of cards.
+    /// </summary>
+    /// <param name="prompt">Customizable prompt displayed to the user.</param>
+    /// <param name="stack">The stack of cards that the user will choose from.</param>
+    /// <param name="card">Output flashcard data that the user selected.</param>
+    /// <returns></returns>
     private static bool HandleFlashcardSelection(string prompt, Stack stack, out Flashcard? card)
     {
         //Check that the stack actually DOES have cards in it.
@@ -321,6 +339,12 @@ public class StudyAid()
         return true;
     }
 
+    /// <summary>
+    /// Takes a generic list of any type and determines if there are any elements within that list.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <returns>True if list has any elements, false otherwise.</returns>
     private static bool CheckIfAnyElementsExist<T>(List<T> list)
     {
         return list != null && list.Count > 0;
