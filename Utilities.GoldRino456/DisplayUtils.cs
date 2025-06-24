@@ -67,17 +67,5 @@ namespace Utilities.GoldRino456
 
             return input;
         }
-
-        public static void DisplayElementsAsTable(string[] columns, List<string[]> rows)
-        {
-            var table = new Table();
-
-            table.AddColumns(columns);
-
-            foreach (var row in rows)
-            {
-                table.AddRow(row);
-            }
-        }
     }
 }

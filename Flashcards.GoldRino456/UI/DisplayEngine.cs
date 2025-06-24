@@ -131,6 +131,20 @@ namespace Flashcards.GoldRino456.UI
             PressAnyKeyToContinue();
         }
 
+        public static void DisplayStudySessions(List<StudySession> studySessions, Dictionary<int, string> stackNamesByID)
+        {
+            string[] columns = ["Study Session Date", "Card Stack", "Score"];
+            List<string[]> rows = new();
+
+            foreach(StudySession studySession in studySessions)
+            {
+                string[] temp = [$"{studySession.SessionDate.ToShortDateString()}", $"{stackNamesByID[studySession.StackId]}", $"{studySession.Score}"];
+                rows.Add(temp);
+            }
+
+            DisplayUtils.DisplayListAsTable(columns, rows);
+        }
+
         public static void ClearScreen()
         {
             AnsiConsole.Clear();

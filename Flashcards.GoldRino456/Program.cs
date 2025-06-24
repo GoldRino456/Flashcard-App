@@ -37,6 +37,7 @@ public class StudyAid()
                 break;
 
             case MenuOptions.ViewStudySession:
+                ProcessViewStudySessions();
                 break;
 
             case MenuOptions.Quit:
@@ -60,6 +61,34 @@ public class StudyAid()
                 StartStudySession(cardQueue, selectedStack.StackId);
             }
         }
+    }
+
+    private static void ProcessViewStudySessions()
+    {
+        var stackList = DatabaseManager.Instance.StackCtrl.ReadAllEntries();
+        if(!CheckIfAnyElementsExist<Stack>(stackList))
+        {
+            DisplayEngine.DisplayErrorToUser("No card stacks currently exist!");
+            DisplayEngine.PressAnyKeyToContinue();
+            return;
+        }
+
+        var sessionsList = DatabaseManager.Instance.StudySessionCtrl.ReadAllEntries();
+        if (!CheckIfAnyElementsExist<StudySession>(sessionsList))
+        {
+            DisplayEngine.DisplayErrorToUser("No study session records to retrieve!");
+            DisplayEngine.PressAnyKeyToContinue();
+            return;
+        }
+
+        Dictionary<int, string> stackDisplayNames = new();
+        foreach (var stack in stackList)
+        {
+            stackDisplayNames[stack.StackId] = stack.StackName;
+        }
+
+        DisplayEngine.DisplayStudySessions(sessionsList, stackDisplayNames);
+        DisplayEngine.PressAnyKeyToContinue();
     }
 
     private static void StartStudySession(Queue<Flashcard> cardQueue, int stackId)
