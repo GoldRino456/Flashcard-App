@@ -1,5 +1,6 @@
 ﻿using Flashcards.GoldRino456.Database.Models;
 using Spectre.Console;
+using System.Linq;
 using Utilities.GoldRino456;
 
 namespace Flashcards.GoldRino456.UI
@@ -37,11 +38,22 @@ namespace Flashcards.GoldRino456.UI
             return (EditOptions) DisplayUtils.PromptUserForIndexSelection("Please make a selection:", editOptions);
         }
 
-        public static void PromptUserForStackInfo(Stack stack)
+        public static void PromptUserForStackInfo(Stack stack, List<string> stackNames)
         {
-            var stackName = DisplayUtils.PromptUserForStringInput("What do you want to call this card stack?");
+            while(true)
+            {
+                var stackName = DisplayUtils.PromptUserForStringInput("What do you want to call this card stack?");
 
-            stack.StackName = stackName;
+                if(!stackNames.Contains(stackName, StringComparer.OrdinalIgnoreCase))
+                {
+                    stack.StackName = stackName;
+                    return;
+                }
+                else
+                {
+                    DisplayErrorToUser("Stack name is already taken. Please enter a different stack name.");
+                }
+            }
         }
 
         public static void PromptUserForFlashcardInfo(Flashcard flashcard, List<Stack> stackList)

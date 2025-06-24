@@ -48,6 +48,13 @@ namespace Flashcards.GoldRino456.Database.Controllers
             return DatabaseUtils.ExecuteQueryCommand<Stack>(_connectionString, readQuery);
         }
 
+        public List<string> ReadAllEntryNames()
+        {
+            string readQuery = "SELECT stackName FROM Stacks";
+
+            return DatabaseUtils.ExecuteQueryCommand<string>(_connectionString, readQuery);
+        }
+
         public Stack ReadEntry(int id)
         {
             string readQuery = "SELECT * FROM Stacks WHERE stackId = @Id";

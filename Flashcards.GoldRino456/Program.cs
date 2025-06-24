@@ -60,6 +60,16 @@ public class StudyAid()
                 Queue<Flashcard> cardQueue = new Queue<Flashcard>(cardsList);
                 StartStudySession(cardQueue, selectedStack.StackId);
             }
+            else
+            {
+                DisplayEngine.DisplayErrorToUser("Stack has no flashcards in it!");
+                DisplayEngine.PressAnyKeyToContinue();
+            }
+        }
+        else
+        {
+            DisplayEngine.DisplayErrorToUser("No stacks exist to study!");
+            DisplayEngine.PressAnyKeyToContinue();
         }
     }
 
@@ -146,8 +156,10 @@ public class StudyAid()
 
     private static void ProcessCreateStack()
     {
+        var stackNames = DatabaseManager.Instance.StackCtrl.ReadAllEntryNames();
+
         Stack newStack = new();
-        DisplayEngine.PromptUserForStackInfo(newStack);
+        DisplayEngine.PromptUserForStackInfo(newStack, stackNames);
         DatabaseManager.Instance.StackCtrl.CreateEntry(newStack);
     }
 
@@ -171,8 +183,11 @@ public class StudyAid()
         Stack? selectedStack;
         if (HandleStackSelection("Which stack would you like to edit?", out selectedStack))
         {
+            var stackNames = DatabaseManager.Instance.StackCtrl.ReadAllEntryNames();
+            stackNames.Remove(selectedStack.StackName);
+
             Stack updatedStack = new();
-            DisplayEngine.PromptUserForStackInfo(updatedStack);
+            DisplayEngine.PromptUserForStackInfo(updatedStack, stackNames);
             DatabaseManager.Instance.StackCtrl.UpdateEntry(selectedStack.StackId, updatedStack);
         }
     }
