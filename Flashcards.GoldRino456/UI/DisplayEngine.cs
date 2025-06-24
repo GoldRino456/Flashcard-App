@@ -1,6 +1,5 @@
 ﻿using Flashcards.GoldRino456.Database.Models;
 using Spectre.Console;
-using System.Linq;
 using Utilities.GoldRino456;
 
 namespace Flashcards.GoldRino456.UI

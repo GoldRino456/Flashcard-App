@@ -1,7 +1,6 @@
 ﻿using Flashcards.GoldRino456.Database;
 using Flashcards.GoldRino456.Database.Models;
 using Flashcards.GoldRino456.UI;
-using Utilities.GoldRino456;
 
 public class StudyAid()
 {

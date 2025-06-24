@@ -4,11 +4,5 @@
     {
         public int StackId {  get; set; }
         public string? StackName { get; set; }
-
-
-        public override string ToString()
-        {
-            return $"{StackId}: {StackName}";
-        }
     }
 }

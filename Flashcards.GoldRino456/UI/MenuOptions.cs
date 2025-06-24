@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Flashcards.GoldRino456.UI
+﻿namespace Flashcards.GoldRino456.UI
 {
     enum MenuOptions
     {
